@@ -1,0 +1,36 @@
+
+services:
+  app:
+    restart: always
+    image: 'corde/product:1.0.0-SNAPSHOT'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - db
+    environment:
+      - QUARKUS_DATASOURCE_URL=jdbc:mariadb://db:3306/productdb
+      - QUARKUS_DATASOURCE_USERNAME=quarkus
+      - QUARKUS_DATASOURCE_PASSWORD=quarkus
+      - QUARKUS-JPA-HIBERNATE-DDL_AUTO=update
+    ports:
+        - '8081:8081'
+    networks:
+      - dock-db-tests
+
+  db:
+    image: 'mariadb:10.11'
+    container_name: db
+    ports:
+      - '3306:3306'
+    environment:
+      - MARIADB_ROOT_PASSWORD=admin
+      - MYSQL_USER=quarkus
+      - MYSQL_PASSWORD=quarkus
+      - MYSQL_DATABASE=productdb
+
+    networks:
+      - dock-db-tests
+
+networks:
+  dock-db-tests:
